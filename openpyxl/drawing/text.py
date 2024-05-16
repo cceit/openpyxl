@@ -262,8 +262,8 @@ class CharacterProperties(Serialisable):
 
 class TabStop(Serialisable):
 
-    pos = Typed(expected_type=Coordinate, allow_none=True)
-    algn = Typed(expected_type=Set(values=(['l', 'ctr', 'r', 'dec'])))
+    pos = Coordinate(allow_none=True)
+    algn = Set(values=(['l', 'ctr', 'r', 'dec']))
 
     def __init__(self,
                  pos=None,
