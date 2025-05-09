@@ -55,13 +55,13 @@ class TestExternalLink:
 
 
     def test_write(self, ExternalLink):
-        expected  = """
+        expected = """
         <externalLink
-          xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+        xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
         </externalLink>
-         """
+        """
         link = ExternalLink()
-        link.file_link = Relationship(Target="somefile.xlsx", type="externalLink")
+        link.file_links.append(Relationship(Target="somefile.xlsx", type="externalLink"))
         xml = tostring(link.to_tree())
         diff = compare_xml(xml, expected)
         assert diff is None, diff
@@ -140,7 +140,10 @@ def test_read_external_link(datadir):
     rels = get_dependents(archive, ARC_WORKBOOK_RELS)
     rel = rels.get("rId4")
     book = read_external_link(archive, rel.Target)
-    assert book.file_link.Target == "book2.xlsx"
+
+    # Check the number of file links and their targets
+    assert len(book.file_links) == 1
+    assert book.file_links[0].Target == "book2.xlsx"
 
 
 def test_write_workbook(datadir, tmpdir):

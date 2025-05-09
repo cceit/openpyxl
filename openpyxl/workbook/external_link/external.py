@@ -15,7 +15,7 @@ from openpyxl.descriptors.nested import NestedText
 from openpyxl.descriptors.sequence import NestedSequence, ValueSequence
 
 from openpyxl.packaging.relationship import (
-    Relationship,
+    RelationshipList,
     get_rels_path,
     get_dependents
     )
@@ -153,7 +153,7 @@ class ExternalLink(Serialisable):
     mime_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.externalLink+xml"
 
     externalBook = Typed(expected_type=ExternalBook, allow_none=True)
-    file_link = Typed(expected_type=Relationship, allow_none=True) # link to external file
+    file_links = Typed(expected_type=RelationshipList)  # Use RelationshipList for multiple file links
 
     __elements__ = ('externalBook', )
 
@@ -164,7 +164,7 @@ class ExternalLink(Serialisable):
                  extLst=None,
                 ):
         self.externalBook = externalBook
-        # ignore other items for the moment.
+        self.file_links = RelationshipList()  # Initialize as a RelationshipList
 
 
     def to_tree(self):
@@ -185,6 +185,17 @@ def read_external_link(archive, book_path):
 
     link_path = get_rels_path(book_path)
     deps = get_dependents(archive, link_path)
-    book.file_link = deps[0]
+    # Handle multiple relationships using RelationshipList
+    book.file_links = deps  # Store all relationships
+
+    # Optionally, handle duplicates or select the appropriate one
+    # For example, you can remove duplicates based on the Target attribute
+    unique_links = {}
+
+    for rel in book.file_links:
+            unique_links[rel.Target] = rel
+
+    # Convert unique links back to a RelationshipList
+    book.file_links = RelationshipList(unique_links.values())
 
     return book

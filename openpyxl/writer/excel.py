@@ -346,8 +346,12 @@ class ExcelWriter(object):
 
             xml = link.to_tree()
             self.archive.writestr(link.path[1:], tostring(xml))
+
+            # Create a RelationshipList and add all file_links
             rels = RelationshipList()
-            rels.append(link.file_link)
+            for file_link in link.file_links:
+                rels.append(file_link)
+
             self.archive.writestr(rels_path, tostring(rels.to_tree()))
             self.manifest.append(link)
 

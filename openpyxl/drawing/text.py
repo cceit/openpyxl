@@ -274,6 +274,7 @@ class TabStop(Serialisable):
 
 
 class TabStopList(Serialisable):
+    namespace = DRAWING_NS
 
     tab = Typed(expected_type=TabStop, allow_none=True)
 
@@ -284,6 +285,7 @@ class TabStopList(Serialisable):
 
 
 class Spacing(Serialisable):
+    namespace = DRAWING_NS
 
     spcPct = NestedInteger(allow_none=True)
     spcPts = NestedInteger(allow_none=True)
@@ -361,9 +363,9 @@ class ParagraphProperties(Serialisable):
     buChar = NestedValue(expected_type=str, attribute="char", allow_none=True)
     buBlip = NestedValue(expected_type=Blip, attribute="blip", allow_none=True)
 
-    __elements__ = ('lnSpc', 'spcBef', 'spcAft', 'tabLst', 'defRPr',
+    __elements__ = ('lnSpc', 'spcBef', 'spcAft',
                     'buClrTx', 'buClr', 'buSzTx', 'buSzPct', 'buSzPts', 'buFontTx', 'buFont',
-                    'buNone', 'buAutoNum', 'buChar', 'buBlip')
+                    'buNone', 'buAutoNum', 'buChar', 'buBlip', 'tabLst', 'defRPr')
 
     def __init__(self,
                  marL=None,
@@ -487,7 +489,7 @@ class RegularTextRun(Serialisable):
                  t="",
                 ):
         self.rPr = rPr
-        self.t = t
+        self.t = t.strip()
 
 
 class LineBreak(Serialisable):
